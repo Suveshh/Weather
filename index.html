@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='https://fonts.googleapis.com/css?family=Varela Round' rel='stylesheet'>
+    <style>
+        * {
+           margin: 0%; 
+           padding: 0%;
+           box-sizing: border-box;
+           font-family: 'Varela Round';
+           
+        }
+        body{
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .error-message {
+            color: #faf5f5; 
+            align-items: center;
+            font-size: 18px;
+            display: none;
+            margin-left: 30px;
+            margin-top: 20px;
+        }
+        button{
+            height: 20px;
+            width: 20px;
+        }
+        .container{
+            background : linear-gradient(to bottom right, rgb(57, 209, 163), rgb(73, 133, 178));
+            border-radius: 20px;
+            box-shadow: 5px 5px 4px rgb(69, 69, 69);
+            padding-top: 35px;
+            padding-bottom: 35px;
+        }
+        .search{
+            width: 450px;
+            display: flex;
+            justify-content: space-around;   
+        }
+        .input input{
+            width: 300px;
+            height: 50px;
+            border: none;
+            border-radius: 30px;
+            padding-left: 40px;
+            font-size: medium;    
+        }
+        .details{
+            display: none;
+        }
+        .img{
+            display: none;
+        }
+        button {
+            height: 50px;
+            width: 50px;
+            border: none;
+            border-radius: 50%;
+            background-color: #ffffff;
+        }
+        
+        .temperature{
+            font-size: 80px;
+            color: #ffffff;
+        }
+        .city{
+            font-size: 50px;
+            color: #ffffff;
+            margin-bottom: 40px;
+        }
+        
+        .humidity,.wind{
+            display: flex;
+            align-items: center;
+        }
+        .details .humidity img , .details .wind img{
+            height: 40px;
+            margin-right: 10px;
+        }
+        .details .humidity p,.details .wind p{
+            color: #ffffff;
+            font-size: 20px;
+        }
+        .details .humidity p:first-child,.details .wind p:first-child{
+            font-size: 30px;   
+        }
+
+        @media screen and (max-width: 550px)
+        {
+        .container{
+           padding: 20px;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+        }
+        .search button, .img button {
+        height: 40px;
+        width: 40px;
+         }
+        .search{
+            width: 280px;
+            display: flex;
+            justify-content: space-around;   
+        }
+        .input input{
+            width: 180px;
+            height: 40px;
+            border: none;
+            border-radius: 30px;
+            padding-left: 10px;
+            font-size: medium;
+        }
+        .image img{
+            height: 180px;
+            width: 180px;
+        }
+        .temperature{
+            font-size: 60px;
+        }
+        .city{
+            font-size: 40px;
+            margin-bottom: 30px;
+        }
+        .details .humidity img , .details .wind img{
+            height: 30px;
+            margin-right: 10px;
+            margin-left: 13px;
+        }
+        .details .humidity p,.details .wind p{
+            font-size: 12px;
+            margin-right: 15px;
+
+        }
+        .details .humidity p:first-child,.details .wind p:first-child{
+            font-size: 17px;  
+            margin-right: 15px; 
+        }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div class="search">
+        <div class="input">
+            <input type="text" name="" id="input" placeholder="enter city name">
+        </div>
+            <button id="btnn"><i class="fa fa-magnifying-glass fa-beat" style="color: #898a8b;"></i></button>
+    </div>
+    <div class="error-message" id="error-message"></div>
+    <div class="img" id="img">
+    <div class="image"><img id="image" src="Rain.png" alt=""></div>
+    <div class="temperature" id="temperature">22°c</div>
+    <div class="city" id="city">cuttack</div>
+    </div>
+    <div class="details" id="details">
+       <div class="humidity">
+        <img src="humidity.png" alt="">
+        <div ><p id="humidity">50%</p>
+        <p>Humidity</p>
+        </div>
+        </div>
+       <div class="wind">
+        <img src="wind.png" alt="">
+        <div ><p id="wind">15 km/h</p>
+        <p>Wind Speed</p>
+        </div>
+       </div>
+    </div>
+</div>
+<script>
+    const source = "https://api.openweathermap.org/data/2.5/weather?q=";
+    const key = "382e66d1b164584a60f9d719a76dc716";
+    const btn = document.getElementById("btnn");
+    const errorMessage = document.getElementById("error-message");
+    const d = document.getElementById("details");
+    const img = document.getElementById("img");
+    
+    const Start = function(){
+        const city = document.getElementById("input").value;
+        const url = 'https://api.openweathermap.org/data/2.5/weather?q='+ city +'&appid=382e66d1b164584a60f9d719a76dc716&units=metric' ; 
+    fetch(url)
+    .then((response) => {
+        if (!response.ok) {
+            errorMessage.innerText = "Invalid city name. Please enter a valid city.";
+            errorMessage.style.display = "flex";
+            d.style.display='none';
+            img.style.display='none';
+            throw new Error("error")
+        }
+        return response.json();
+    })
+    .then((data)=>{
+        errorMessage.style.display = "none";
+        d.style.display='flex';
+        d.style.justifyContent= 'space-around';
+        img.style.display='flex';
+        img.style.flexDirection='column';
+        img.style.alignItems='center';
+        console.log(data);
+        const t = document.getElementById("temperature");
+        const c = document.getElementById("city");
+        const h = document.getElementById("humidity");
+        const w = document.getElementById("wind");
+        const i = document.getElementById("image");
+        c.innerText = data.name;
+        t.innerText = Math.round(data.main.temp) + "°c";
+        h.innerText = data.main.humidity + "%";
+        w.innerText = data.wind.speed + " km/h";
+        i.src = data.weather[0].main + ".png";  
+    })
+    }
+    btn.addEventListener('click' , Start);
+    
+
+</script>
+</body>
+</html>
