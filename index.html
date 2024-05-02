@@ -216,7 +216,7 @@
         const city = document.getElementById("input").value;
         const url =
           "https://api.openweathermap.org/data/2.5/weather?q=" +
-          city +
+          city.trim() +
           "&appid=382e66d1b164584a60f9d719a76dc716&units=metric";
         fetch(url)
           .then((response) => {
